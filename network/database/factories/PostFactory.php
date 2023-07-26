@@ -19,7 +19,8 @@ class PostFactory extends Factory
         return [
             'title' => $this->faker->sentence(5),
             'content' => $this->faker->paragraph(5),
-            'user_id' => $this->faker->numberBetween(1,10)
+            'user_id' => $this->faker->numberBetween(1,10),
+            'image' => $this->faker->image('public/images',300,300)
         ];
     }
 }

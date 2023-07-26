@@ -34,6 +34,19 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //
+        $fileName = $request->input('id') . '.' . $request->image->extension();
+        $request->image->storeAs('public/images', $fileName);
+
+        $post = new Post;
+        $post -> id = $request->input('id');
+        $post -> title = $request->input('title');
+        $post -> content = $request->input('content');
+        $post -> user_id = $request->input('user_id');
+        $post -> image = $fileName;
+        $post -> save();
+
+        return response()->json($post);
+        
     }
 
     /**
