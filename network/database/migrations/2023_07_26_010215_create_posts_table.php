@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
+            $table->string('title',100);
+            // store the path of image
+            $table->string('image')->nullable();
+            $table->text('content');
+            $table->bigInteger('user_id')->unsigned();
             $table->timestamps();
         });
     }
