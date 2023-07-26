@@ -11,13 +11,18 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(User $user=null)
     {
         //to get user's posts $user->posts
         //return response()->json($user->posts);
         //to get all users' posts
-        $posts = Post::all();
-        return response()->json($posts);
+        if($user){
+            return response()->json($user->posts);
+        }
+        else{
+            $posts = Post::all();
+            return response()->json($posts);
+        }
     }
 
     /**
