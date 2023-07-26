@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -17,6 +18,9 @@ class PostController extends Controller
         //return response()->json($user->posts);
         //to get all users' posts
         if($user){
+            if(Auth::id() != $user->id){
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
             return response()->json($user->posts);
         }
         else{
@@ -28,10 +32,10 @@ class PostController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
+    //public function create()
+    //{
         //
-    }
+    //}
 
     /**
      * Store a newly created resource in storage.
@@ -43,10 +47,9 @@ class PostController extends Controller
         $request->image->storeAs('public/images', $fileName);
 
         $post = new Post;
-        $post -> id = $request->input('id');
         $post -> title = $request->input('title');
         $post -> content = $request->input('content');
-        $post -> user_id = $request->input('user_id');
+        $post -> user_id = Auth::id();
         $post -> image = $fileName;
         $post -> save();
 
@@ -57,32 +60,50 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show(User $user, Post $post)
     {
-        //
+        if (Auth::id() !== $post->user_id){
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        return response()->json($post);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
-    {
+    //public function edit(Post $post)
+    //{
         //
-    }
+    //}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, User $user, Post $post)
     {
-        //
+        if(Auth::id() !== $post->user_id){
+            return response()->json(['error' => 'Unauthorized',403]);
+        }
+
+        $post->title = $request->title;
+        $post->content = $request->content;
+        $post->image = $request->image;
+        $post->save();
+
+        return response()->json($post);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(User $user, Post $post)
     {
-        //
+        if(Auth::id() !== $post->user_id){
+            return response()->json(['error' => 'Unauthorized',403]);
+        }
+
+        $post->delete();
+
+        return response()->json($post);
     }
 }
