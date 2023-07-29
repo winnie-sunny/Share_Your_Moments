@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
@@ -42,19 +43,21 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $fileName = $request->input('id') . '.' . $request->image->extension();
-        $request->image->storeAs('public/images', $fileName);
 
+        Log::info($request);
         $post = new Post;
-        $post -> title = $request->input('title');
-        $post -> content = $request->input('content');
-        $post -> user_id = Auth::id();
-        $post -> image = $fileName;
-        $post -> save();
+        if($request->hasFile('file')){
+            $fileName = time() . '.' . $request->file->getClientOriginalExtension();
+            $request->file->move(public_path('images'), $fileName);
+            $post -> image = 'http://localhost:8000/images/' . $fileName;
+        }
 
+        $post -> title = $request->title;
+        $post -> content = $request->content;
+        $post -> user_id = Auth::id();
+
+        $post -> save();
         return response()->json($post);
-        
     }
 
     /**

@@ -1,5 +1,4 @@
 const baseUrl = 'http://127.0.0.1:8000'
-
 const app = Vue.createApp({
   data: function () {
     return {
@@ -7,6 +6,7 @@ const app = Vue.createApp({
       token: '',
       user: {},
       posts: [],
+      file:null,
       showNewPost: false,
       showEditPost: false,
       loginForm: {
@@ -16,7 +16,7 @@ const app = Vue.createApp({
       postForm: {
         title: '',
         content: '',
-        image: ''
+        //image: ''
       },
       editForm: {
         title: '',
@@ -62,9 +62,8 @@ const app = Vue.createApp({
               'Authorization': `Bearer ${this.token}`
             }
           })
-
           this.posts = await response.json()
-
+          console.log()
         }
 
       } catch(error){
@@ -72,25 +71,52 @@ const app = Vue.createApp({
 
       }  
     },
-    addPost: async function () {
-/*        try{
-        const response=await fetch(`${baseUrl}/api/user/${this.user.id}/posts`,{
+
+    onFileChange: function(e){
+      this.file = e.target.files[0]
+      //console.log(this.file.files)
+    },
+
+    addPost: async function (e) {
+        try{
+          e.preventDefault()
+          formData = new FormData()
+          formData.append('file', this.file)
+          formData.append('title',this.postForm.title)
+          formData.append('content',this.postForm.content)
+
+          config = {
+            headers: {
+              'Content-Type':'multipart/form-data',
+              'Authorization': `Bearer ${this.token}`
+            }
+          }
+          await axios.post(`${baseUrl}/api/user/${this.user.id}/posts`,formData,config).then(function (response){
+            newpost = response.data
+          })
+
+        //const json = await response.json()
+        //console.log(newpost)
+        //this.posts.push(json)
+        this.showNewPost = false
+/*          const response=await fetch(`${baseUrl}/api/user/${this.user.id}/posts`, {
           method: 'post',
           headers: {
-            'Content-Type':'application/json',
-            'Accept': 'application/json',
+            'Content-Type':'multipart/form-data',
             'Authorization': `Bearer ${this.token}`
           },
-          body: JSON.stringify(this.postForm)
-        })
+          body: formData
+        });
+
 
         const json = await response.json()
+        //console.log(json)
         this.posts.push(json)
-        this.showNewPost = false
+        this.showNewPost = false */
         
       }catch(error){
         console.log(error)
-      }  */
+      }  
     },
     editPost: function (post) {
       
