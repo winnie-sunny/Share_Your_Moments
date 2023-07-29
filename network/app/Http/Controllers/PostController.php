@@ -18,16 +18,19 @@ class PostController extends Controller
         //to get user's posts $user->posts
         //return response()->json($user->posts);
         //to get all users' posts
-        if($user){
+
+
+/*         if($user){
             if(Auth::id() != $user->id){
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
             return response()->json($user->posts);
         }
-        else{
+        else{ */
             $posts = Post::all();
             return response()->json($posts);
-        }
+
+        //}
     }
 
     /**
