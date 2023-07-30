@@ -13,7 +13,7 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(User $user=null)
+    public function index()
     {
         //to get user's posts $user->posts
         //return response()->json($user->posts);
@@ -85,7 +85,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user, Post $post)
+    public function update(Request $request, Post $post)
     {
         if(Auth::id() !== $post->user_id){
             return response()->json(['error' => 'Unauthorized',403]);
@@ -102,7 +102,7 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user, Post $post)
+    public function destroy(Post $post)
     {
         if(Auth::id() !== $post->user_id){
             return response()->json(['error' => 'Unauthorized',403]);
@@ -110,6 +110,6 @@ class PostController extends Controller
 
         $post->delete();
 
-        return response()->json($post);
+        return response($post);
     }
 }

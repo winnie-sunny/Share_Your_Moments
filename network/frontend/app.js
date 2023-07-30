@@ -63,7 +63,6 @@ const app = Vue.createApp({
             }
           })
           this.posts = await response.json()
-          console.log()
         }
 
       } catch(error){
@@ -78,27 +77,27 @@ const app = Vue.createApp({
     },
 
     addPost: async function (e) {
-        try{
-          e.preventDefault()
-          formData = new FormData()
-          formData.append('file', this.file)
-          formData.append('title',this.postForm.title)
-          formData.append('content',this.postForm.content)
+      try{
+        e.preventDefault()
+        formData = new FormData()
+        formData.append('file', this.file)
+        formData.append('title',this.postForm.title)
+        formData.append('content',this.postForm.content)
 
-          config = {
-            headers: {
-              'Content-Type':'multipart/form-data',
-              'Authorization': `Bearer ${this.token}`
-            }
+        config = {
+          headers: {
+            'Content-Type':'multipart/form-data',
+            'Authorization': `Bearer ${this.token}`
           }
-          await axios.post(`${baseUrl}/api/user/${this.user.id}/posts`,formData,config).then(function (response){
-            newpost = response.data
-          })
+        }
+        await axios.post(`${baseUrl}/api/user/${this.user.id}/posts`,formData,config).then(function (response){
+          newpost = response.data
+        })
 
-        //const json = await response.json()
-        //console.log(newpost)
-        //this.posts.push(json)
-        this.showNewPost = false
+      const json = newpost
+      //console.log(newpost)
+      this.posts.push(json)
+      this.showNewPost = false
 /*          const response=await fetch(`${baseUrl}/api/user/${this.user.id}/posts`, {
           method: 'post',
           headers: {
@@ -118,6 +117,8 @@ const app = Vue.createApp({
         console.log(error)
       }  
     },
+
+
     editPost: function (post) {
       
     },
@@ -125,7 +126,26 @@ const app = Vue.createApp({
 
     },
     deletePost: async function (post) {
-      
+      try {
+        if (this.user.id && this.token && confirm("Are you sure to delete this post ?")){
+          const response = await fetch(`${baseUrl}/api/posts/${post.id}`,{
+            method: 'delete',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${this.token}`
+            },
+            //body: JSON.stringify(post)
+          })
+          const json = await response.json()
+          this.getPosts()
+          //this.getPosts()
+        }
+
+
+      } catch (error){
+        console.log(error)
+      }
     },
     logout: async function () {
       
