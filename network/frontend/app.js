@@ -120,7 +120,8 @@ const app = Vue.createApp({
 
 
     editPost: function (post) {
-      
+      this.editForm.title = post.title
+      this.editForm.content = post.content
     },
     updatePost: async function () {
 
