@@ -23,7 +23,7 @@
       
       <!-- Display posts if user is logged in -->
       <div class="row" v-if="token">
-        <div class="col-12 col-xl-6 p-3" v-for="post in posts">
+        <div class="col-12 col-xl-6 p-3" v-for="post in posts.slice().reverse()">
           <div class="card">
             <div class="card-header d-flex justify-content-between p-3">
               <h4 class="">{{ post.title }}</h4>
