@@ -19,6 +19,7 @@ const app = Vue.createApp({
         //image: ''
       },
       editForm: {
+        id: '',
         title: '',
         content: '',
         image: ''
@@ -80,7 +81,9 @@ const app = Vue.createApp({
       try{
         e.preventDefault()
         formData = new FormData()
-        formData.append('file', this.file)
+        if(this.file){
+          formData.append('file', this.file)
+        }
         formData.append('title',this.postForm.title)
         formData.append('content',this.postForm.content)
 
@@ -93,7 +96,8 @@ const app = Vue.createApp({
         await axios.post(`${baseUrl}/api/user/${this.user.id}/posts`,formData,config).then(function (response){
           newpost = response.data
         })
-
+      
+      this.file = null
       const json = newpost
       //console.log(newpost)
       this.posts.push(json)
@@ -122,9 +126,37 @@ const app = Vue.createApp({
     editPost: function (post) {
       this.editForm.title = post.title
       this.editForm.content = post.content
+      this.editForm.id = post.id
     },
-    updatePost: async function () {
+    updatePost: async function (e) {
+      try{
+        e.preventDefault()
+        updateData = new FormData()
+        if(this.file){
+          updateData.append('file', this.file)
+        }
+        updateData.append('title',this.editForm.title)
+        updateData.append('content',this.editForm.content)
+        updateData.append('id',this.editForm.id)
+        updateData.append('_method', 'PUT')
 
+          config = {
+          headers: {
+            'Content-Type':'multipart/form-data',
+            'Authorization': `Bearer ${this.token}`
+          }
+        }
+        await axios.post(`${baseUrl}/api/posts/${this.editForm.id}`,updateData,config).then(function (response){
+          newpost = response.data
+        })  
+
+      this.file = null
+      this.showEditPost = false
+      this.getPosts()
+        
+      }catch(error){
+        console.log(error)
+      }  
     },
     deletePost: async function (post) {
       try {

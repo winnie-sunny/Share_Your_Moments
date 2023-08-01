@@ -46,8 +46,6 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-
-        Log::info($request);
         $post = new Post;
         if($request->hasFile('file')){
             $fileName = time() . '.' . $request->file->getClientOriginalExtension();
@@ -87,15 +85,25 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        if(Auth::id() !== $post->user_id){
+
+/*         if(Auth::id() !== $request->user_id){
             return response()->json(['error' => 'Unauthorized',403]);
+        } */
+
+        if($request->hasFile('file')){
+            $fileName = time() . '.' . $request->file->getClientOriginalExtension();
+            $request->file->move(public_path('images'), $fileName);
+            $post -> image = 'http://localhost:8000/images/' . $fileName;
         }
 
-        $post->title = $request->title;
-        $post->content = $request->content;
-        $post->image = $request->image;
-        $post->save();
+        $post -> id = $request->id;
+        $post -> user_id = Auth::id();
+        $post -> title = $request->title;
+        $post -> content = $request->content;
+        log::info($post);
+        log::info($request);
 
+        $post -> save();
         return response()->json($post);
     }
 
