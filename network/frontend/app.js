@@ -228,7 +228,11 @@ const app = Vue.createApp({
   },
 
     logout: async function () {
-      
+      this.token = ''
+      this.user = {}
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('user')
+
     }
 
   }
