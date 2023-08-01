@@ -27,6 +27,7 @@
           <div class="card">
             <div class="card-header d-flex justify-content-between p-3">
               <h4 class="">{{ post.title }}</h4>
+              <button class="btn btn-outline-secondary me-3" @click="showComments = true; getComments(post);" >Comments</button>
               <div class="d-flex align-items-center" v-if="user.id == post.user_id">
                 <button class="btn btn-outline-secondary me-3" @click="showEditPost = true; editPost(post);" >Edit</button>
                 <button class="btn btn-outline-danger" @click="deletePost(post)">Delete</button>
@@ -125,7 +126,46 @@
           </div>
         </div>
       </div>
-    
+      
+      <!-- Show Comments and Add Comments -->
+      <div class="modal" tabindex="-1" :class="{'d-block pt-5 show bg-dark bg-opacity-75': showComments}">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Comments</h5>
+              <button type="button" class="btn-close" aria-label="Close" @click="showComments = false"></button>
+            </div>
+            <div v-for="comment in comments">
+              <ul>
+                <li>{{comment.content}}</li>
+              </ul>
+            </div>
+<!--             <div class="modal-body">
+              <form @submit.prevent="addPost" enctype="multipart/form-data">
+                <div class="form-group mb-3">
+                  <label class="form-label" for="title">
+                    Title
+                  </label>
+                  <input type="text" id="title" class="form-control" v-model="postForm.title">
+                </div>
+  
+                <div class="form-group mb-3">
+                  <label class="form-label" for="content">Content</label>
+                  <textarea id="content" class="form-control" v-model="postForm.content"></textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                  <label class="form-label" for="image">Image</label>
+                  <input type="file" id="image" accept="image/*" class="form-control" @change="onFileChange($event)"></input>
+                </div>
+  
+                <button type="submit" class="btn btn-primary">Add Post</button>
+              </form>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
     </div>
     <script src="app.js"></script>
   </body>

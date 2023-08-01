@@ -6,9 +6,11 @@ const app = Vue.createApp({
       token: '',
       user: {},
       posts: [],
+      comments: [],
       file:null,
       showNewPost: false,
       showEditPost: false,
+      showComments: false,
       loginForm: {
         email: '',
         password: ''
@@ -53,6 +55,7 @@ const app = Vue.createApp({
         console.log(error)
       }
     },
+
     getPosts: async function () {
         try {
         if (this.user.id && this.token){
@@ -64,12 +67,28 @@ const app = Vue.createApp({
             }
           })
           this.posts = await response.json()
-        }
-
+      }
       } catch(error){
         console.log(error)
 
       }  
+    },
+
+    getComments: async function(post) {
+      try{
+        this.comments = [];
+        const response = await fetch(`${baseUrl}/api/post/${post.id}/comments`, {
+          method: 'get',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${this.token}`
+          }
+        })
+        this.comments = await response.json()
+      } catch(error){
+        console.log(error)
+      }
+      
     },
 
     onFileChange: function(e){
