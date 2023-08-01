@@ -140,28 +140,18 @@
                 <li>{{comment.content}}</li>
               </ul>
             </div>
-<!--             <div class="modal-body">
-              <form @submit.prevent="addPost" enctype="multipart/form-data">
+             <div class="modal-body">
+              <form @submit.prevent="addComment">
                 <div class="form-group mb-3">
-                  <label class="form-label" for="title">
-                    Title
+                  <label class="form-label" for="content">
+                    Content
                   </label>
-                  <input type="text" id="title" class="form-control" v-model="postForm.title">
-                </div>
-  
-                <div class="form-group mb-3">
-                  <label class="form-label" for="content">Content</label>
-                  <textarea id="content" class="form-control" v-model="postForm.content"></textarea>
+                  <input type="text" id="content" class="form-control" v-model="comment.content">
                 </div>
 
-                <div class="form-group mb-3">
-                  <label class="form-label" for="image">Image</label>
-                  <input type="file" id="image" accept="image/*" class="form-control" @change="onFileChange($event)"></input>
-                </div>
-  
-                <button type="submit" class="btn btn-primary">Add Post</button>
+                <button type="submit" class="btn btn-primary">Add Comment</button>
               </form>
-            </div> -->
+            </div> 
           </div>
         </div>
       </div>

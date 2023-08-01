@@ -7,6 +7,10 @@ const app = Vue.createApp({
       user: {},
       posts: [],
       comments: [],
+      comment:{
+        post_id:'',
+        content:''
+      },
       file:null,
       showNewPost: false,
       showEditPost: false,
@@ -17,7 +21,7 @@ const app = Vue.createApp({
       },
       postForm: {
         title: '',
-        content: '',
+        content: ''
         //image: ''
       },
       editForm: {
@@ -76,6 +80,7 @@ const app = Vue.createApp({
 
     getComments: async function(post) {
       try{
+        this.comment.post_id = post.id
         this.comments = [];
         const response = await fetch(`${baseUrl}/api/post/${post.id}/comments`, {
           method: 'get',
@@ -199,6 +204,29 @@ const app = Vue.createApp({
         console.log(error)
       }
     },
+
+    addComment: async function () {
+      try {
+      if (this.user.id && this.token){
+        const response = await fetch(`${baseUrl}/api/post/${this.comment.post_id}/comments`, {
+          method: 'post',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.token}`
+          },
+          body: JSON.stringify(this.comment)
+        })
+        const newcomment = await response.json()
+        this.comments.push(newcomment)
+        this.comment.content = ''
+    }
+    } catch(error){
+      console.log(error)
+
+    }  
+  },
+
     logout: async function () {
       
     }
