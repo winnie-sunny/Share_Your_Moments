@@ -11,6 +11,13 @@ const app = Vue.createApp({
         post_id:'',
         content:''
       },
+      likes: [],
+      like: {
+        id:'',
+        likes: ''
+      },
+      disables: [],
+      disabled: false,
       file:null,
       showNewPost: false,
       showEditPost: false,
@@ -71,6 +78,22 @@ const app = Vue.createApp({
             }
           })
           this.posts = await response.json()
+          await this.getLikes()
+
+          for(let i =0; i<this.posts.length;i++){
+            this.posts[i]['likes'] = this.likes[i].likes
+            for(let j = 0; j < this.disables.length;j++){
+              if (this.posts[i].id==this.disables[j]){
+                this.posts[i].disabled = true
+                break
+              }
+              
+              this.posts[i].disabled =false
+
+            }
+          }
+
+
       }
       } catch(error){
         console.log(error)
@@ -226,6 +249,67 @@ const app = Vue.createApp({
 
     }  
   },
+
+  iLikeIt: async function(post){
+
+    try {
+      if (this.user.id && this.token){
+        id = Number(post.id)
+        //let before = this.likes[id]['likes']
+        this.disables.push(id)
+        this.like.id = id
+        this.like.likes = Number(this.likes[id-1].likes) + 1
+        this.like['_method'] = 'PUT'
+        // likeData = new FormData()
+        // likeData.append('likes',this.like.likes)
+        // likeData.append('id',this.like.id)
+        // likeData.append('_method', 'PUT')
+        config = {
+          headers: {
+            'Content-Type':'application/json',
+            
+            'Authorization': `Bearer ${this.token}`
+          }
+        }
+        await axios.post(`${baseUrl}/api/like/${post.id}`,JSON.stringify(this.like),config).then(function (response){
+          newpost = response.data
+        })   
+        
+        await this.getPosts()
+        //this.disabled=true;
+         /* const response = await fetch(`${baseUrl}/api/like/${post.id}`, {
+          method: 'put',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${this.token}`
+          },
+          body: JSON.stringify(this.like)
+        })  */
+    }
+    } catch(error){
+      console.log(error)
+  
+    }  
+},
+
+getLikes: async function() {
+  try {
+    if (this.user.id && this.token){
+      const response = await fetch(`${baseUrl}/api/like`, {
+        method: 'get',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${this.token}`
+        }
+      })
+      this.likes = await response.json()
+  }
+  } catch(error){
+    console.log(error)
+
+  }  
+  
+},
 
     logout: async function () {
       this.token = ''

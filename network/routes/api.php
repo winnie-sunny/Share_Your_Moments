@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +27,5 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::apiResource('user.posts',PostController::class);
     Route::apiResource('posts', PostController::class);
     Route::apiResource('post.comments', CommentController::class);
+    Route::apiResource('like', LikeController::class);
 });
