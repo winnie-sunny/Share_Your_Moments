@@ -18,6 +18,7 @@ class LikeFactory extends Factory
     {
         return [
             'likes' => $this->faker->numberBetween(1,20),
+            
         ];
     }
 }

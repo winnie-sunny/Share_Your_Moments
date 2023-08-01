@@ -31,12 +31,12 @@ class LikeController extends Controller
     public function store(Request $request)
     {
         //
-/*         if (request()->expectsJson()) {
-            $like=Like::find($request->id);
-            $like->likes=$request->likes;
-            $like->save();
-               return response()->json($like);
-            } */
+        $like = new Like();
+        $like->id = $request->id;
+        $like->likes=0;
+        $like->save();
+           
+        return response()->json($like);
     }
 
     /**

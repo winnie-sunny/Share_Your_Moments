@@ -16,6 +16,10 @@ const app = Vue.createApp({
         id:'',
         likes: ''
       },
+      addLike: {
+        id:'',
+        likes:'0'
+      },
       disables: [],
       disabled: false,
       file:null,
@@ -145,10 +149,17 @@ const app = Vue.createApp({
         })
       
       this.file = null
+      this.postForm= {
+        title: '',
+        content: ''
+      }
       const json = newpost
+      json.likes = 0
+      json.disabled = false
       //console.log(newpost)
       this.posts.push(json)
       this.showNewPost = false
+      this.createLike(newpost)
 /*          const response=await fetch(`${baseUrl}/api/user/${this.user.id}/posts`, {
           method: 'post',
           headers: {
@@ -258,7 +269,12 @@ const app = Vue.createApp({
         //let before = this.likes[id]['likes']
         this.disables.push(id)
         this.like.id = id
-        this.like.likes = Number(this.likes[id-1].likes) + 1
+        for(let i = 0 ; i < this.likes.length; i++){
+          if(this.likes[i].id == id){
+            this.like.likes = Number(this.likes[i].likes) + 1
+            break
+          }
+        }
         this.like['_method'] = 'PUT'
         // likeData = new FormData()
         // likeData.append('likes',this.like.likes)
@@ -267,7 +283,6 @@ const app = Vue.createApp({
         config = {
           headers: {
             'Content-Type':'application/json',
-            
             'Authorization': `Bearer ${this.token}`
           }
         }
@@ -303,12 +318,37 @@ getLikes: async function() {
         }
       })
       this.likes = await response.json()
+      console.log(this.likes)
   }
   } catch(error){
     console.log(error)
 
   }  
   
+},
+
+createLike: async function(e){
+  try {
+    this.addLike.id = e.id
+    this.addLike.likes = 0
+    if (this.user.id && this.token){
+      const response = await fetch(`${baseUrl}/api/like`, {
+        method: 'post',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${this.token}`
+        },
+        body: JSON.stringify(this.addLike)
+      })
+
+      newlike = await response.json()
+      console.log(newlike)
+      this.likes.push(newlike)
+  }
+  } catch(error){
+    console.log(error)
+
+  }  
 },
 
     logout: async function () {
