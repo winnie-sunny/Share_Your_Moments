@@ -2,7 +2,7 @@ const baseUrl = 'http://127.0.0.1:8000'
 const app = Vue.createApp({
   data: function () {
     return {
-      title: 'Network',
+      title: 'Share Your Moments',
       token: '',
       user: {},
       posts: [],
@@ -40,14 +40,17 @@ const app = Vue.createApp({
         title: '',
         content: '',
         image: ''
-      }
+      },
+      errors: {}
     }
   },
+
   created: async function () { 
     this.token = sessionStorage.getItem('token') || ''
     this.user = JSON.parse(sessionStorage.getItem('user') || {})
     this.getPosts()
   },
+
   methods: {
     login: async function () {
       try {
@@ -135,87 +138,117 @@ const app = Vue.createApp({
         if(this.file){
           formData.append('file', this.file)
         }
-        formData.append('title',this.postForm.title)
-        formData.append('content',this.postForm.content)
-
-        config = {
-          headers: {
-            'Content-Type':'multipart/form-data',
-            'Authorization': `Bearer ${this.token}`
-          }
+        //add validation
+        if(!this.postForm.title){
+          this.errors.post_title = "The title of your post can not be empty."
         }
-        await axios.post(`${baseUrl}/api/user/${this.user.id}/posts`,formData,config).then(function (response){
-          newpost = response.data
-        })
+        else if(this.postForm.title.length <3 || this.postForm.title.length >60){
+          this.errors.post_title = "The length of title should be between 3-60 characters.."
+          
+        }
+
+        if(!this.postForm.content){
+          this.errors.post_content = "The content of your post can not be empty."
+          
+        }
+        else if(this.postForm.content.length < 6 || this.postForm.title.length >300){
+          this.errors.post_content = "The length of content should be between 6-300 characters."
+          
+        }
+        else{
+          formData.append('title',this.postForm.title)
+          formData.append('content',this.postForm.content)
+
+          config = {
+            headers: {
+              'Content-Type':'multipart/form-data',
+              'Authorization': `Bearer ${this.token}`
+            }
+          }
+          await axios.post(`${baseUrl}/api/user/${this.user.id}/posts`,formData,config).then(function (response){
+            newpost = response.data
+          })
       
-      this.file = null
-      this.postForm= {
-        title: '',
-        content: ''
-      }
-      const json = newpost
-      json.likes = 0
-      json.disabled = false
+        this.file = null
+        this.postForm= {
+          title: '',
+          content: ''
+        } 
+        const json = newpost
+        json.likes = 0
+        json.disabled = false
       //console.log(newpost)
-      this.posts.push(json)
-      this.showNewPost = false
-      this.createLike(newpost)
-/*          const response=await fetch(`${baseUrl}/api/user/${this.user.id}/posts`, {
-          method: 'post',
-          headers: {
-            'Content-Type':'multipart/form-data',
-            'Authorization': `Bearer ${this.token}`
-          },
-          body: formData
-        });
-
-
-        const json = await response.json()
-        //console.log(json)
         this.posts.push(json)
-        this.showNewPost = false */
+        this.showNewPost = false
+        this.createLike(newpost)
+         }
+
         
       }catch(error){
         console.log(error)
       }  
     },
-
 
     editPost: function (post) {
       this.editForm.title = post.title
       this.editForm.content = post.content
       this.editForm.id = post.id
     },
+
     updatePost: async function (e) {
       try{
         e.preventDefault()
-        updateData = new FormData()
-        if(this.file){
-          updateData.append('file', this.file)
-        }
-        updateData.append('title',this.editForm.title)
-        updateData.append('content',this.editForm.content)
-        updateData.append('id',this.editForm.id)
-        updateData.append('_method', 'PUT')
 
-          config = {
-          headers: {
-            'Content-Type':'multipart/form-data',
-            'Authorization': `Bearer ${this.token}`
+        //add validation
+        if(!this.editForm.title){
+          this.errors.post_title = "The title of your post can not be empty."
+          
+        }
+        else if(this.editPost.title.length <3 || this.editForm.title.length >60){
+          this.errors.post_title = "The length of title should be between 3-60 characters."
+          
+        }
+
+        if(!this.editForm.content){
+          this.errors.post_content = "The content of your post can not be empty."
+         
+        }
+        else if(this.editForm.content.length < 6 || this.editForm.title.length >300){
+          this.errors.post_content = "The length of content should be between 6-300 characters."
+          
+        }
+        else{
+          updateData = new FormData()
+          if(this.file){
+            updateData.append('file', this.file)
           }
-        }
-        await axios.post(`${baseUrl}/api/posts/${this.editForm.id}`,updateData,config).then(function (response){
-          newpost = response.data
-        })  
+          updateData.append('title',this.editForm.title)
+          updateData.append('content',this.editForm.content)
+          updateData.append('id',this.editForm.id)
+          updateData.append('_method', 'PUT')
 
-      this.file = null
-      this.showEditPost = false
-      this.getPosts()
+            config = {
+            headers: {
+              'Content-Type':'multipart/form-data',
+              'Authorization': `Bearer ${this.token}`
+            }
+          }
+          await axios.post(`${baseUrl}/api/posts/${this.editForm.id}`,updateData,config).then(function (response){
+            newpost = response.data
+          })  
+
+        this.file = null
+        this.showEditPost = false
+        this.getPosts()
+        }
+
+        
         
       }catch(error){
         console.log(error)
       }  
     },
+
     deletePost: async function (post) {
       try {
         if (this.user.id && this.token && confirm("Are you sure to delete this post ?")){
@@ -242,18 +275,27 @@ const app = Vue.createApp({
     addComment: async function () {
       try {
       if (this.user.id && this.token){
-        const response = await fetch(`${baseUrl}/api/post/${this.comment.post_id}/comments`, {
-          method: 'post',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.token}`
-          },
-          body: JSON.stringify(this.comment)
-        })
-        const newcomment = await response.json()
-        this.comments.push(newcomment)
-        this.comment.content = ''
+        if(!this.comment.content){
+          this.errors.comment = "Your comment can not be empty."
+        }
+        else if(this.comment.content.length < 5){
+          this.errors.comment = "Your comment must be more than 5 characters."
+        }
+        else{
+          const response = await fetch(`${baseUrl}/api/post/${this.comment.post_id}/comments`, {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${this.token}`
+            },
+            body: JSON.stringify(this.comment)
+          })
+          const newcomment = await response.json()
+          this.comments.push(newcomment)
+          this.comment.content = ''
+        }
+        
     }
     } catch(error){
       console.log(error)
@@ -318,7 +360,6 @@ getLikes: async function() {
         }
       })
       this.likes = await response.json()
-      console.log(this.likes)
   }
   } catch(error){
     console.log(error)
@@ -342,7 +383,6 @@ createLike: async function(e){
       })
 
       newlike = await response.json()
-      console.log(newlike)
       this.likes.push(newlike)
   }
   } catch(error){
@@ -356,6 +396,10 @@ createLike: async function(e){
       this.user = {}
       sessionStorage.removeItem('token')
       sessionStorage.removeItem('user')
+      this.loginForm = {
+        email: '',
+        password: ''
+      }
 
     }
 
