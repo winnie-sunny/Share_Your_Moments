@@ -134,6 +134,7 @@ const app = Vue.createApp({
     addPost: async function (e) {
       try{
         e.preventDefault()
+        this.errors = {}
         formData = new FormData()
         if(this.file){
           formData.append('file', this.file)
@@ -193,18 +194,18 @@ const app = Vue.createApp({
       this.editForm.title = post.title
       this.editForm.content = post.content
       this.editForm.id = post.id
+      this.errors = {}
     },
 
     updatePost: async function (e) {
       try{
         e.preventDefault()
-
         //add validation
         if(!this.editForm.title){
           this.errors.post_title = "The title of your post can not be empty."
           
         }
-        else if(this.editPost.title.length <3 || this.editForm.title.length >60){
+        else if(this.editForm.title.length <3 || this.editForm.title.length >60){
           this.errors.post_title = "The length of title should be between 3-60 characters."
           
         }

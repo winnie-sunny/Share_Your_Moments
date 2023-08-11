@@ -32,7 +32,6 @@
             <img :src=post.image alt="image for the post" width="300" height="300" v-if="post.image" class="card-img-top"> 
             <div class="card-header d-flex justify-content-between p-3">
               <h4 class="">{{ post.title }}</h4>
-              <small class="text-muted">{{post.created_at}}</small>
               <div class="d-flex align-items-center" v-if="user.id == post.user_id">
                 <button class="btn btn-outline-secondary me-3" @click="showEditPost = true; editPost(post);" >Edit</button>
                 <button class="btn btn-outline-danger" @click="deletePost(post)">Delete</button>
@@ -40,6 +39,10 @@
             </div>
             <div class="card-body">
               <p class="card-text">{{ post.content }}</p>
+              <div style="text-align: right;">
+                <small class="text-muted">{{post.created_at.slice(0,10)}} {{post.created_at.slice(11,16)}}</small>
+              </div>
+              
               <div class="d-flex justify-content-between p-3">
                 <button type="button" class="btn btn-primary" @click="iLikeIt(post)" :disabled=post.disabled><span class="bi bi-heart"></span> Like {{post.likes}}</button>
                 <button class="btn btn-outline-primary me-3" @click="showComments = true; getComments(post);" >Comments</button>
@@ -151,7 +154,7 @@
               <div style="padding: 10px 10px 10px 10px;">
                 <div class="d-flex w-100 justify-content-between">
                   <h5 class="mb-1">User {{comment.user_id}}</h5>
-                  <small class="text-muted">{{comment.created_at}}</small>
+                  <small class="text-muted">{{comment.created_at.slice(0,10)}} {{comment.created_at.slice(11,16)}}</small>
                 </div>
                 <p class="mb-1">{{comment.content}}</p>
               </div>
@@ -174,6 +177,96 @@
       </div>
 
     </div>
+    
+    <!-- Footer -->
+<footer class="text-center text-lg-start bg-white text-muted" style="color: #1f4339;">
+
+  <!-- Section: Links  -->
+  <section class="">
+    <div class="container text-center text-md-start mt-5 border-top">
+      <!-- Grid row -->
+      <div class="row mt-3">
+        <!-- Grid column -->
+        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+          <!-- Content -->
+          <h6 class="text-uppercase fw-bold mb-4">
+            <i class="fas fa-gem me-3 text-secondary"></i>Share Your Moments
+          </h6>
+          <p>
+            We Hope you enjoy sharing your life moments here with your friends and exporing the world.
+          </p>
+        </div>
+        <!-- Grid column -->
+
+        <!-- Grid column -->
+        <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+          <!-- Links -->
+          <h6 class="text-uppercase fw-bold mb-4">
+            Products
+          </h6>
+          <p>
+            <a href="#!" class="text-reset">Post</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset">Video</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset">Friends</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset">Explore</a>
+          </p>
+        </div>
+        <!-- Grid column -->
+
+        <!-- Grid column -->
+        <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+          <!-- Links -->
+          <h6 class="text-uppercase fw-bold mb-4">
+            Useful links
+          </h6>
+          <p>
+            <a href="#!" class="text-reset">Registration</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset">Referral</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset">Settings</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset">Help</a>
+          </p>
+        </div>
+        <!-- Grid column -->
+
+        <!-- Grid column -->
+        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+          <!-- Links -->
+          <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+          <p><i class="fas fa-home me-3 text-secondary"></i> Ottawa, ON K2B 5K8, Canada</p>
+          <p>
+            <i class="fas fa-envelope me-3 text-secondary"></i>
+            info@shareyourmoments.com
+          </p>
+          <p><i class="fas fa-phone me-3 text-secondary"></i> +1 123 456 7890</p>
+        </div>
+        <!-- Grid column -->
+      </div>
+      <!-- Grid row -->
+    </div>
+  </section>
+  <!-- Section: Links  -->
+
+  <!-- Copyright -->
+  <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.025);">
+    © 2023 Copyright:
+    <a class="text-reset fw-bold" href="#!">ShareYourMoments.com</a>
+  </div>
+  <!-- Copyright -->
+</footer>
+<!-- Footer -->
+
     <script src="app.js"></script>
   </body>
 </html>
