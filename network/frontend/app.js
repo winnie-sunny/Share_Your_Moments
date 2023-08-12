@@ -264,7 +264,17 @@ const app = Vue.createApp({
             },
             //body: JSON.stringify(post)
           })
-          const json = await response.json()
+
+          const response2 = await fetch(`${baseUrl}/api/like/${post.id}`,{
+            method: 'delete',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${this.token}`
+            },
+            //body: JSON.stringify(post)
+          })
+          
           this.getPosts()
           //this.getPosts()
         }
