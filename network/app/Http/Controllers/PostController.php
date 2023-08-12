@@ -55,6 +55,11 @@ class PostController extends Controller
             $post -> image = 'http://localhost:8000/images/' . $fileName;
         }
 
+        $request->validate([
+            'title' => 'required|min:3|max:60',
+            'content' => 'required|min:6|max:300' 
+        ]);
+
         $post -> title = $request->title;
         $post -> content = $request->content;
         $post -> user_id = Auth::id();
@@ -97,6 +102,11 @@ class PostController extends Controller
             $request->file->move(public_path('images'), $fileName);
             $post -> image = 'http://localhost:8000/images/' . $fileName;
         }
+
+        $request->validate([
+            'title' => 'required|min:3|max:60',
+            'content' => 'required|min:6|max:300' 
+        ]);
 
         $post -> id = $request->id;
         $post -> user_id = Auth::id();

@@ -134,7 +134,7 @@ const app = Vue.createApp({
     addPost: async function (e) {
       try{
         e.preventDefault()
-        this.errors = {}
+        
         formData = new FormData()
         if(this.file){
           formData.append('file', this.file)
@@ -181,6 +181,7 @@ const app = Vue.createApp({
       //console.log(newpost)
         this.posts.push(json)
         this.showNewPost = false
+        this.errors = {}
         this.createLike(newpost)
          }
 
@@ -240,6 +241,7 @@ const app = Vue.createApp({
 
         this.file = null
         this.showEditPost = false
+        this.errors = {}
         this.getPosts()
         }
 
@@ -279,8 +281,8 @@ const app = Vue.createApp({
         if(!this.comment.content){
           this.errors.comment = "Your comment can not be empty."
         }
-        else if(this.comment.content.length < 5){
-          this.errors.comment = "Your comment must be more than 5 characters."
+        else if(this.comment.content.length < 5 || this.comment.content.length >100){
+          this.errors.comment = "Your comment must be between 5 and 100 characters."
         }
         else{
           const response = await fetch(`${baseUrl}/api/post/${this.comment.post_id}/comments`, {
@@ -295,6 +297,7 @@ const app = Vue.createApp({
           const newcomment = await response.json()
           this.comments.push(newcomment)
           this.comment.content = ''
+          this.errors = {}
         }
         
     }
